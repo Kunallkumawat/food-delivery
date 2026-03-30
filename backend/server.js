@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connect
-mongoose.connect('mongodb://127.0.0.1:27017/foodOrdering')
+mongoose.connect('mongodb+srv://kunalkmwt826_db_user:12345@cluster0.s9u41bv.mongodb.net/foodOrdering')
 .then(()=>console.log("MongoDB Connected ✅"))
 .catch(err=>console.log(err));
 
