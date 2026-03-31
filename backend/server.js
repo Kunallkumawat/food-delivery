@@ -32,7 +32,9 @@ app.listen(5000, ()=>{
 // Place Order API
 app.post('/api/orders', async (req, res) => {
     const order = req.body;
+
     order.status = "pending";
+    order.userEmail = req.body.userEmail; // 🔥 ye line add kar
 
     await mongoose.connection.db.collection("orders").insertOne(order);
 
