@@ -1,7 +1,6 @@
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 const user = JSON.parse(localStorage.getItem("user"));
 
-if (user) {
     fetch("https://food-delivery-b2f6.onrender.com/api/restaurants")
     .then(res => res.json())
     .then(data => {
@@ -14,13 +13,16 @@ if (user) {
             let menuHTML = "";
 
             r.menu.forEach(item => {
-                menuHTML += `
+                 menuHTML += `
                     <p>${item.name} - ₹${item.price}</p>
-                    <button onclick="addToCart('${item.name}', ${item.price})">
-                        Add to Cart
-                    </button>
-                `;
-            });
+        
+                    ${user ? 
+                        `<button onclick="addToCart('${item.name}', ${item.price})">Add to Cart</button>` 
+                        : 
+                        `<button onclick="alert('Login karo ❌')">Login to order</button>`
+                    }
+            `;
+        });
 
             div.innerHTML = `
                 <img src="${r.image}" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836'" />
@@ -33,7 +35,7 @@ if (user) {
             list.appendChild(div);
         });
     });
-}
++
 
 // Add to cart with quantity
 function addToCart(name, price) {
@@ -178,15 +180,30 @@ function login() {
 }
 function loadOrders() {
     const user = JSON.parse(localStorage.getItem("user"));
-  data.forEach(order => {
-    div.innerHTML += `
-        <div style="border:1px solid black; margin:10px; padding:10px;">
-            <p>Total: ₹${order.total}</p>
-            <p>Date: ${new Date(order.date).toLocaleString()}</p>
-            <p>Status: ${order.status}</p>   ✅
-        </div>
-    `;
-});
+
+    if (!user) {
+        alert("Login karo ❌");
+        return;
+    }
+
+    fetch(`https://food-delivery-b2f6.onrender.com/api/orders/${user.email}`)
+    .then(res => res.json())
+    .then(data => {
+        const div = document.getElementById("orders");
+        div.innerHTML = "<h2>Your Orders</h2>";
+
+        data.forEach(order => {
+            div.innerHTML += `
+                <div style="border:1px solid black; margin:10px; padding:10px;">
+                    <p>Total: ₹${order.total}</p>
+                    <p>Date: ${new Date(order.date).toLocaleString()}</p>
+                    <p style="color:${order.status === 'pending' ? 'orange' : 'green'}">
+                         Status: ${order.status}
+</p>                </div>
+            `;
+        });
+    });
+}
   if (!user) {
         alert("Login karo ❌");
         return;
